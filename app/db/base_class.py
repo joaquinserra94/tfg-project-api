@@ -1,4 +1,5 @@
 from app.db.base import Base
-from app.models import Project
+from app.models.project import Project
+from app.models.task import Task
 
-__all__ = ["Base", "Project"]
+__all__ = ["Base", "Project", "Task"]
