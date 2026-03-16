@@ -6,11 +6,18 @@ import app.services.task_service as task_service
 from app.schemas.task import TaskCreate, TaskResponse
 from app.db.dependencies import get_db
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
 @router.post("/", response_model=TaskResponse)
-def create_task(task: TaskCreate, db: Session = Depends(get_db)):
+def create_task(
+    task: TaskCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     return task_service.create_task(db, task)
 
 

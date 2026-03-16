@@ -5,6 +5,9 @@ from app.db.session import SessionLocal
 from app.schemas.project import ProjectCreate, ProjectResponse
 from app.services import project_service
 
+from app.core.security import get_current_user
+from app.models.user import User
+
 router = APIRouter(prefix="/projects", tags=["Projects"])
 
 
@@ -17,7 +20,11 @@ def get_db():
 
 
 @router.post("/", response_model=ProjectResponse)
-def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
+def create_project(
+    project: ProjectCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     return project_service.create_project(db, project)
 
 
@@ -38,8 +45,11 @@ def get_project(project_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/{project_id}")
-def delete_project(project_id: int, db: Session = Depends(get_db)):
-
+def delete_project(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     project = project_service.delete_project(db, project_id)
 
     if not project:
@@ -48,8 +58,12 @@ def delete_project(project_id: int, db: Session = Depends(get_db)):
     return {"message": "Project deleted"}
 
 @router.put("/{project_id}", response_model=ProjectResponse)
-def update_project(project_id: int, project: ProjectCreate, db: Session = Depends(get_db)):
-
+def update_project(
+    project_id: int,
+    project: ProjectCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     updated_project = project_service.update_project(db, project_id, project)
 
     if not updated_project:
