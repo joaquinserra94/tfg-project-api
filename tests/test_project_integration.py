@@ -55,3 +55,24 @@ def test_create_project_without_token():
     response = client.post("/projects/", json=project_data)
 
     assert response.status_code == 401
+
+def test_project_pagination():
+    token = create_user_and_get_token()
+
+    for i in range(5):
+        client.post(
+            "/projects/",
+            json={
+                "name": f"Proyecto {i}",
+                "description": "Test paginacion"
+            },
+            headers={"Authorization": f"Bearer {token}"}
+        )
+
+    response = client.get("/projects/?skip=0&limit=2")
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert isinstance(data, list)
+    assert len(data) == 2

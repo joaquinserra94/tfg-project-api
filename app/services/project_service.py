@@ -11,8 +11,11 @@ def create_project(db: Session, project_data: ProjectCreate):
     return project
 
 
-def get_projects(db: Session):
-    return db.query(Project).all()
+#def get_projects(db: Session):
+    #return db.query(Project).all() // Comentamos para hacer el test de sprint 4
+
+def get_projects(db: Session, skip: int = 0, limit: int = 10): 
+    return db.query(Project).offset(skip).limit(limit).all() 
 
 
 def get_project(db: Session, project_id: int):

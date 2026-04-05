@@ -29,8 +29,14 @@ def create_project(
 
 
 @router.get("/", response_model=list[ProjectResponse])
-def list_projects(db: Session = Depends(get_db)):
-    return project_service.get_projects(db)
+def list_projects(
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):
+    return project_service.get_projects(db, skip=skip, limit=limit)
+#def list_projects(db: Session = Depends(get_db)):
+    #return project_service.get_projects(db)
 
 
 @router.get("/{project_id}", response_model=ProjectResponse)
