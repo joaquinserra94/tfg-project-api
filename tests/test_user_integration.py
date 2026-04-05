@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -6,8 +8,10 @@ client = TestClient(app)
 
 
 def test_register_and_login_user():
+    unique_email = f"test_{uuid.uuid4().hex[:8]}@example.com"
+
     user_data = {
-        "email": "integration_test@example.com",
+        "email": unique_email,
         "password": "clave_segura_123"
     }
 
