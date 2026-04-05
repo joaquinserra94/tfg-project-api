@@ -8,6 +8,7 @@ from app.api.task_routes import router as task_router
 from app.api.user_routes import router as user_router
 from app.db.session import engine
 
+# 🔹 Configuración de logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
@@ -15,17 +16,20 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+# 🔹 Inicialización de la app
 app = FastAPI(
     title="Project Management API",
     description="API RESTful para gestión de proyectos y tareas",
     version="1.0.0"
 )
 
+# 🔹 Registro de routers
 app.include_router(project_router)
 app.include_router(task_router)
 app.include_router(user_router)
 
 
+# 🔹 Middleware para logging de requests
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     logger.info(f"Request started - method={request.method} path={request.url.path}")
@@ -39,12 +43,14 @@ async def log_requests(request: Request, call_next):
     return response
 
 
+# 🔹 Endpoint raíz
 @app.get("/")
 def root():
     logger.info("Root endpoint accessed")
     return {"message": "API running"}
 
 
+# 🔹 Healthcheck de base de datos
 @app.get("/health/db")
 def check_database():
     try:
@@ -52,8 +58,16 @@ def check_database():
             connection.execute(text("SELECT 1"))
 
         logger.info("Database healthcheck successful")
-        return {"message": "Database connection successful"}
+
+        return {
+            "status": "ok",
+            "database": "connected"
+        }
 
     except Exception as e:
         logger.error(f"Database healthcheck failed: {str(e)}")
-        return {"message": "Database connection failed"}
+
+        return {
+            "status": "error",
+            "database": "disconnected"
+        }
