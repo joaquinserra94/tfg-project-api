@@ -2,35 +2,14 @@ name: CI
 
 on:
   push:
-    branches: [main, feat/mvp-core]
-  pull_request:
     branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: tfg_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres -d tfg_db"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tfg_db
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,9 +17,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Run tests
         run: pytest
