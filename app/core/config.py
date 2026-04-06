@@ -7,7 +7,7 @@ load_dotenv()
 class Settings:
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql://project_user:project_pass@db:5432/project_db"
+        "postgresql://postgres:postgres@localhost:5432/tfg_db"
     )
 
 
