@@ -9,7 +9,12 @@ import app.services.user_service as user_service
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.post("/", response_model=UserResponse)
+@router.post(
+    "/",
+    response_model=UserResponse,
+    summary="Registrar usuario",
+    description="Crea un nuevo usuario en el sistema a partir de un correo electrónico y una contraseña."
+)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     existing_user = user_service.get_user_by_email(db, user.email)
 
@@ -19,7 +24,11 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     return user_service.create_user(db, user)
 
 
-@router.post("/login")
+@router.post(
+    "/login",
+    summary="Autenticación de usuario",
+    description="Permite a un usuario autenticarse y obtener un token de acceso."
+)
 def login_user(user_credentials: UserLogin, db: Session = Depends(get_db)):
     user = user_service.authenticate_user(
         db,

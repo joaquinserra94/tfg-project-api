@@ -12,7 +12,12 @@ from app.models.user import User
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 
-@router.post("/", response_model=TaskResponse)
+@router.post(
+    "/",
+    response_model=TaskResponse,
+    summary="Crear tarea",
+    description="Crea una nueva tarea en el sistema. Requiere autenticación mediante token en el encabezado Authorization."
+)
 def create_task(
     task: TaskCreate,
     db: Session = Depends(get_db),
@@ -21,12 +26,22 @@ def create_task(
     return task_service.create_task(db, task)
 
 
-@router.get("/", response_model=list[TaskResponse])
+@router.get(
+    "/",
+    response_model=list[TaskResponse],
+    summary="Listar tareas",
+    description="Devuelve el listado de tareas registradas en el sistema."
+)
 def list_tasks(db: Session = Depends(get_db)):
     return task_service.get_tasks(db)
 
 
-@router.get("/{task_id}", response_model=TaskResponse)
+@router.get(
+    "/{task_id}",
+    response_model=TaskResponse,
+    summary="Obtener tarea",
+    description="Obtiene la información detallada de una tarea concreta a partir de su identificador."
+)
 def get_task(task_id: int, db: Session = Depends(get_db)):
     task = task_service.get_task(db, task_id)
 
@@ -36,8 +51,16 @@ def get_task(task_id: int, db: Session = Depends(get_db)):
     return task
 
 
-@router.delete("/{task_id}")
-def delete_task(task_id: int, db: Session = Depends(get_db)):
+@router.delete(
+    "/{task_id}",
+    summary="Eliminar tarea",
+    description="Elimina una tarea existente. Requiere autenticación mediante token en el encabezado Authorization."
+)
+def delete_task(
+    task_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     task = task_service.delete_task(db, task_id)
 
     if not task:

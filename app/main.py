@@ -19,7 +19,13 @@ logger = logging.getLogger(__name__)
 # 🔹 Inicialización de la app
 app = FastAPI(
     title="Project Management API",
-    description="API RESTful para gestión de proyectos y tareas",
+    description="""
+API RESTful para la gestión de proyectos y tareas.
+
+Permite la gestión de usuarios, autenticación mediante token y operaciones CRUD sobre proyectos y tareas.
+
+Incluye paginación, validación de datos y control de acceso.
+""",
     version="1.0.0"
 )
 
