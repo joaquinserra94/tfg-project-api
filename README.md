@@ -1,10 +1,10 @@
-# 🚀 Project Management API
+# Project Management API
 
 API RESTful para la gestión de proyectos y tareas, desarrollada con FastAPI y PostgreSQL como parte del Trabajo Fin de Grado.
 
 ---
 
-## 📌 Descripción
+## Descripción
 
 Este proyecto implementa una API backend que permite gestionar usuarios, proyectos y tareas mediante operaciones CRUD, incorporando autenticación basada en tokens y buenas prácticas de desarrollo software.
 
@@ -12,7 +12,7 @@ La aplicación está diseñada siguiendo una arquitectura modular por capas y ha
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - FastAPI
 - PostgreSQL
@@ -25,7 +25,7 @@ La aplicación está diseñada siguiendo una arquitectura modular por capas y ha
 
 ---
 
-## ⚙️ Funcionalidades principales
+## Funcionalidades principales
 
 - Registro y autenticación de usuarios
 - Gestión de proyectos (crear, listar, actualizar, eliminar)
@@ -37,7 +37,7 @@ La aplicación está diseñada siguiendo una arquitectura modular por capas y ha
 
 ---
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 app/
 ├── api/ # Endpoints (rutas)
 ├── core/ # Configuración y seguridad
@@ -50,7 +50,7 @@ app/
 
 ---
 
-## 🚀 Ejecución local
+## Ejecución local
 
 ### 1. Clonar repositorio
 
