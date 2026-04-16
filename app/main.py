@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware  # 👈 AÑADIDO
 from sqlalchemy import text
 
 from app.api.project_routes import router as project_router
@@ -29,11 +30,19 @@ Incluye paginación, validación de datos y control de acceso.
     version="1.0.0"
 )
 
+# 🔥 🔹 CORS (AÑADIDO AQUÍ)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Para el TFG (en producción se restringe)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # 🔹 Registro de routers
 app.include_router(project_router)
 app.include_router(task_router)
 app.include_router(user_router)
-
 
 # 🔹 Middleware para logging de requests
 @app.middleware("http")
@@ -48,13 +57,11 @@ async def log_requests(request: Request, call_next):
 
     return response
 
-
 # 🔹 Endpoint raíz
 @app.get("/")
 def root():
     logger.info("Root endpoint accessed")
     return {"message": "API running"}
-
 
 # 🔹 Healthcheck de base de datos
 @app.get("/health/db")
