@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password, verify_password
@@ -10,20 +11,29 @@ def get_user_by_email(db: Session, email: str):
 
 
 def create_user(db: Session, user_data: UserCreate):
-    hashed_pw = hash_password(user_data.password)
+    try:
+        hashed_pw = hash_password(user_data.password)
 
-    user = User(
-        email=user_data.email,
-        hashed_password=hashed_pw,
-        is_active=True,
-        is_admin=False
-    )
+        user = User(
+            email=user_data.email,
+            hashed_password=hashed_pw,
+            is_active=True,
+            is_admin=False
+        )
 
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
-    return user
+        return user
+
+    except IntegrityError:
+        db.rollback()
+        raise
+
+    except Exception:
+        db.rollback()
+        raise
 
 
 def authenticate_user(db: Session, email: str, password: str):

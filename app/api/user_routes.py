@@ -1,4 +1,7 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.security import create_access_token
@@ -7,6 +10,7 @@ from app.schemas.user import UserCreate, UserLogin, UserResponse
 import app.services.user_service as user_service
 
 router = APIRouter(prefix="/users", tags=["Users"])
+logger = logging.getLogger(__name__)
 
 
 @router.post(
@@ -16,12 +20,24 @@ router = APIRouter(prefix="/users", tags=["Users"])
     description="Crea un nuevo usuario en el sistema a partir de un correo electrónico y una contraseña."
 )
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
-    existing_user = user_service.get_user_by_email(db, user.email)
+    try:
+        existing_user = user_service.get_user_by_email(db, user.email)
 
-    if existing_user:
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already registered")
+
+        return user_service.create_user(db, user)
+
+    except IntegrityError:
+        logger.exception("Integrity error while creating user")
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    return user_service.create_user(db, user)
+    except HTTPException:
+        raise
+
+    except Exception:
+        logger.exception("Unexpected error while creating user")
+        raise HTTPException(status_code=500, detail="Internal error while creating user")
 
 
 @router.post(
