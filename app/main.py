@@ -7,6 +7,7 @@ from sqlalchemy import text
 from app.api.project_routes import router as project_router
 from app.api.task_routes import router as task_router
 from app.api.user_routes import router as user_router
+from app.db.base import Base
 from app.db.session import engine
 
 # 🔹 Configuración de logging
@@ -29,9 +30,6 @@ Incluye paginación, validación de datos y control de acceso.
 """,
     version="1.0.0"
 )
-
-from app.db.base import Base
-from app.db.session import engine
 
 Base.metadata.create_all(bind=engine)
 
