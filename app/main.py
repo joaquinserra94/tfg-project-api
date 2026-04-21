@@ -31,7 +31,13 @@ Incluye paginación, validación de datos y control de acceso.
     version="1.0.0"
 )
 
-Base.metadata.create_all(bind=engine)
+@app.on_event("startup")
+def create_tables_on_startup():
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables ensured successfully")
+    except Exception as e:
+        logger.error(f"Error ensuring database tables on startup: {str(e)}")
 
 # 🔥 🔹 CORS (AÑADIDO AQUÍ)
 app.add_middleware(
