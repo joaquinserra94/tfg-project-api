@@ -30,6 +30,11 @@ Incluye paginación, validación de datos y control de acceso.
     version="1.0.0"
 )
 
+from app.db.base import Base
+from app.db.session import engine
+
+Base.metadata.create_all(bind=engine)
+
 # 🔥 🔹 CORS (AÑADIDO AQUÍ)
 app.add_middleware(
     CORSMiddleware,
