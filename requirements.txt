@@ -6,9 +6,10 @@ alembic==1.18.4
 pydantic==2.12.5
 python-dotenv==1.2.2
 pytest==9.0.2
+pytest-cov==7.1.0
 httpx==0.28.1
 passlib[bcrypt]
 bcrypt==4.0.1
-python-jose
-email-validator
 python-jose[cryptography]
+email-validator
+python-multipart
