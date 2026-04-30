@@ -9,6 +9,7 @@ from app.api.task_routes import router as task_router
 from app.api.user_routes import router as user_router
 from app.db.base import Base
 from app.db.session import engine
+from app.api import backup_routes
 
 # 🔹 Configuración de logging
 logging.basicConfig(
@@ -52,6 +53,7 @@ app.add_middleware(
 app.include_router(project_router)
 app.include_router(task_router)
 app.include_router(user_router)
+app.include_router(backup_routes.router)
 
 # 🔹 Middleware para logging de requests
 @app.middleware("http")
