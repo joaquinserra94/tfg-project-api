@@ -35,7 +35,7 @@ Incluye paginación, validación de datos y control de acceso.
 @app.on_event("startup")
 def create_tables_on_startup():
     try:
-        Base.metadata.create_all(bind=engine)
+        #Base.metadata.create_all(bind=engine)
         logger.info("Database tables ensured successfully")
     except Exception as e:
         logger.error(f"Error ensuring database tables on startup: {str(e)}")
