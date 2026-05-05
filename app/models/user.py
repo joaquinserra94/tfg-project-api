@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, Column, Integer, String
 
 from app.db.base import Base
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -11,3 +12,9 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
+
+# modificacion agregada 5/5
+
+    projects = relationship(
+        "Project", back_populates="owner", cascade="all, delete-orphan"
+    )
