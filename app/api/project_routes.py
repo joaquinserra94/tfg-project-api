@@ -1,99 +1,58 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
+from typing import List
 
+from app.db.dependencies import get_db
 from app.core.security import get_current_user
-from app.db.session import SessionLocal
 from app.models.user import User
-from app.schemas.project import ProjectCreate, ProjectResponse
+from app.schemas.project import ProjectCreate, ProjectResponse, ProjectUpdate
 from app.services import project_service
 
 router = APIRouter(prefix="/projects", tags=["Projects"])
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-@router.post(
-    "/",
-    response_model=ProjectResponse,
-    summary="Crear proyecto",
-    description="Crea un nuevo proyecto. Requiere autenticación mediante token en el encabezado Authorization."
-)
-def create_project(
-    project: ProjectCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    return project_service.create_project(db, project)
-
-
-@router.get(
-    "/",
-    response_model=list[ProjectResponse],
-    summary="Listar proyectos",
-    description="Devuelve un listado paginado de proyectos mediante los parámetros skip y limit."
-)
-def list_projects(
+@router.get("/", response_model=List[ProjectResponse])
+def list_projects_endpoint(
     skip: int = 0,
-    limit: int = 10,
-    db: Session = Depends(get_db)
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    return project_service.get_projects(db, skip=skip, limit=limit)
+    return project_service.list_projects(db, current_user, skip, limit)
 
 
-@router.get(
-    "/{project_id}",
-    response_model=ProjectResponse,
-    summary="Obtener proyecto",
-    description="Obtiene la información detallada de un proyecto concreto a partir de su identificador."
-)
-def get_project(project_id: int, db: Session = Depends(get_db)):
-    project = project_service.get_project(db, project_id)
-
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-
-    return project
+@router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
+def create_project_endpoint(
+    data: ProjectCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return project_service.create_project(db, data, current_user)
 
 
-@router.delete(
-    "/{project_id}",
-    summary="Eliminar proyecto",
-    description="Elimina un proyecto existente. Requiere autenticación mediante token en el encabezado Authorization."
-)
-def delete_project(
+@router.get("/{project_id}", response_model=ProjectResponse)
+def get_project_endpoint(
     project_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
-    project = project_service.delete_project(db, project_id)
-
-    if not project:
-        raise HTTPException(status_code=404, detail="Project not found")
-
-    return {"message": "Project deleted"}
+    return project_service.get_project(db, project_id, current_user)
 
 
-@router.put(
-    "/{project_id}",
-    response_model=ProjectResponse,
-    summary="Actualizar proyecto",
-    description="Actualiza la información de un proyecto existente. Requiere autenticación mediante token en el encabezado Authorization."
-)
-def update_project(
+@router.put("/{project_id}", response_model=ProjectResponse)
+def update_project_endpoint(
     project_id: int,
-    project: ProjectCreate,
+    data: ProjectUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
-    updated_project = project_service.update_project(db, project_id, project)
+    return project_service.update_project(db, project_id, data, current_user)
 
-    if not updated_project:
-        raise HTTPException(status_code=404, detail="Project not found")
 
-    return updated_project
+@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_project_endpoint(
+    project_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    project_service.delete_project(db, project_id, current_user)
