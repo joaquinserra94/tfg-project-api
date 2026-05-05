@@ -14,6 +14,7 @@ class ProjectCreate(ProjectBase):
 class ProjectResponse(ProjectBase):
     id: int
     created_at: datetime
+    owner_id: int | None  # 👈 AÑADIDO
 
     class Config:
         from_attributes = True
